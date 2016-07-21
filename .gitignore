@@ -2,3 +2,5 @@
 /lib/
 ~*
 /typings/
+/typings.json
+/tsconfig.json

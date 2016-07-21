@@ -5,7 +5,7 @@ const isNumber = require("is-number");
 
 export default class Sql {
 
-    private _get: QueryKind;
+    private _queryKind: QueryKind;
     private _selects: Array<ISelectItem>;
     private _froms;
     private _wheres: Array<string>;
@@ -26,7 +26,7 @@ export default class Sql {
     }
 
     private reset() {
-        this._get = undefined; // todo: rename to _queryKind
+        this._queryKind = undefined; // todo: rename to _queryKind
         this._selects = [];
         this._froms = [];
         this._wheres = [];
@@ -48,7 +48,7 @@ export default class Sql {
     select(field: string | Array<string>);
     select(func: string, field: any, alias: string);
     select(field?: string | Array<string>, alias?: string, func?: string) {
-        this._get = QueryKind.SELECT;
+        this._queryKind = QueryKind.SELECT;
         switch (arguments.length) {
             case 0:
                 this._selects.push({ "field": "*" });
@@ -314,13 +314,13 @@ export default class Sql {
     }
 
     get() {
-        switch (this._get) {
+        switch (this._queryKind) {
             case QueryKind.SELECT: return this.getSelect();
             case QueryKind.DELETE: return this.getDelete();
             case QueryKind.INSERT: return this.getInsert();
             case QueryKind.UPDATE: return this.getUpdate();
             default:
-                throw new TypeError(`Unknown kind of query ${this._get}`);
+                throw new TypeError(`Unknown kind of query ${this._queryKind}`);
         }
     }
 
@@ -352,7 +352,7 @@ export default class Sql {
     }
 
     delete(table?: string) {
-        this._get = QueryKind.DELETE;
+        this._queryKind = QueryKind.DELETE;
         if (table) {
             this._froms.push(table);
         }
@@ -388,7 +388,7 @@ export default class Sql {
     }
 
     update(table?: string) {
-        this._get = QueryKind.UPDATE;
+        this._queryKind = QueryKind.UPDATE;
         if (table) {
             this._froms.push(table);
         }
@@ -396,7 +396,7 @@ export default class Sql {
     }
 
     insert() {
-        this._get = QueryKind.INSERT;
+        this._queryKind = QueryKind.INSERT;
         return this;
     }
 
