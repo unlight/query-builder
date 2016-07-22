@@ -8,8 +8,7 @@
   },
   "dependencies": {
     "is-number": "^2.1.0",
-    "lodash": "^4.13.1",
-    "toSrc": "^0.1.4"
+    "lodash": "^4.13.1"
   },
   "devDependencies": {
     "ava": "^0.15.2",
