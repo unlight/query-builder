@@ -7,7 +7,7 @@ export default class Sql {
 
     private _queryKind: QueryKind;
     private _selects: Array<ISelectItem>;
-    private _froms;
+    private _tables;
     private _wheres: Array<string>;
     private _whereConcat;
     private _whereConcatDefault;
@@ -28,7 +28,7 @@ export default class Sql {
     private reset() {
         this._queryKind = undefined; // todo: rename to _queryKind
         this._selects = [];
-        this._froms = [];
+        this._tables = [];
         this._wheres = [];
         this._whereConcat = "and";
         this._whereConcatDefault = "and";
@@ -130,15 +130,23 @@ export default class Sql {
         return this;
     }
 
-    from(table: string | Array<string>) {
+    table(table: string | Array<string>) {
         var tables: Array<string>;
         if (!isArray(table)) {
             tables = [table];
         } else {
             tables = table;
         }
-        tables.forEach(t => this._froms.push(t));
+        tables.forEach(t => this._tables.push(t));
         return this;
+    }
+
+    from(table: string | Array<string>) {
+        return this.table(table);
+    }
+
+    into(table: string | Array<string>) {
+        return this.table(table);
     }
 
     private static _operators = [">=", "<=", "!=", "<>", ">", "<", "!@", "@", "%$", "^%", "%", "like", "not like", "is null", "is not null"];
@@ -220,6 +228,7 @@ export default class Sql {
     }
 
     like(field: string, match = "", side = "both", op = "like") {
+        field = trim(field);
         switch (side) {
             case "left": match = "%" + match; break;
             case "right": match += "%"; break;
@@ -233,6 +242,10 @@ export default class Sql {
             default:
                 throw new Error(`Unknown side ${side}`);
         }
+        // console.log('field', JSON.stringify(field));
+        // console.log('op', JSON.stringify(op));
+        // console.log('match', JSON.stringify(match));
+        // console.log(JSON.stringify(`${field} ${op} ${this._wrap(match)}`));
         this._where(`${field} ${op} ${this._wrap(match)}`);
         return this;
     }
@@ -305,7 +318,7 @@ export default class Sql {
         return this;
     }
 
-    orderby(field, direction: string = "asc") {
+    orderBy(field, direction: string = "asc") {
         direction = direction.toLowerCase();
         if (direction !== "asc") direction = "desc";
         var expr = `${field} ${direction}`;
@@ -337,7 +350,7 @@ export default class Sql {
             .join(", ");
         if (selects === "") selects = "*";
         sql += selects;
-        if (this._froms.length > 0) sql += " " + "from " + this._froms.join(", ");
+        if (this._tables.length > 0) sql += " " + "from " + this._tables.join(", ");
         if (this._joins.length > 0) sql += " " + this._joins.join(" ");
         if (this._wheres.length > 0) sql += " " + "where " + this._wheres.join(" ");
         if (this._groupBys.length > 0) sql += " " + "group by " + this._groupBys.join(", ");
@@ -354,13 +367,13 @@ export default class Sql {
     delete(table?: string) {
         this._queryKind = QueryKind.DELETE;
         if (table) {
-            this._froms.push(table);
+            this._tables.push(table);
         }
         return this;
     }
 
     getDelete() {
-        var table = this._froms[0];
+        var table = this._tables[0];
         var result = "delete " + table;
         if (this._wheres.length > 0) {
             result += " " + "where " + this._wheres.join(" ");
@@ -371,7 +384,7 @@ export default class Sql {
 
     getUpdate() {
         this._endQuery();
-        var table = this._froms[0];
+        var table = this._tables[0];
         var result = "update " + table + " set ";
         result += this._sets
             .map(item => {
@@ -390,7 +403,7 @@ export default class Sql {
     update(table?: string) {
         this._queryKind = QueryKind.UPDATE;
         if (table) {
-            this._froms.push(table);
+            this._tables.push(table);
         }
         return this;
     }
@@ -421,7 +434,7 @@ export default class Sql {
 
     getInsert() {
         // this._endQuery();
-        var table = this._froms[0];
+        var table = this._tables[0];
         var result = "insert into " + table;
         var names = this._sets.map(item => item.name);
         var values = this._sets.map(item => {
