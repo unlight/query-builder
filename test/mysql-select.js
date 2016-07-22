@@ -1,9 +1,9 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m.bind(null, "mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("simple select", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select()
         .from("user")
         .where("id", 1)
@@ -12,7 +12,7 @@ test("simple select", t => {
 });
 
 test("select 1", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .beginWhereGroup()
@@ -28,7 +28,7 @@ test("select 1", t => {
 });
 
 test("with or op", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .where("id", 3)
@@ -39,7 +39,7 @@ test("with or op", t => {
 });
 
 test("func concat", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("concat", ["id", "name"], "x")
         .from("user")
         .get();
@@ -47,7 +47,7 @@ test("func concat", t => {
 });
 
 test("with where in", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .whereIn("id", [2, '3'])
@@ -57,21 +57,21 @@ test("with where in", t => {
 });
 
 test("misc selects a", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .get();
 
     t.is(sql, "select * from user");
 
-    sql = sqldriver()
+    sql = q()
         .select("id, name")
         .from("user")
         .get();
 
     t.is(sql, "select id, name from user");
 
-    sql = sqldriver()
+    sql = q()
         .select("id as user_id")
         .select("name as user_name")
         .from("user")
@@ -79,21 +79,21 @@ test("misc selects a", t => {
 
     t.is(sql, "select id as user_id, name as user_name from user");
 
-    sql = sqldriver()
+    sql = q()
         .select(["u.id", "u.name"])
         .from("user u")
         .get();
 
     t.is(sql, "select u.id, u.name from user u");
 
-    sql = sqldriver()
+    sql = q()
         .select("u.id, u.name")
         .from("user u")
         .get();
 
     t.is(sql, "select u.id, u.name from user u");
 
-    sql = sqldriver()
+    sql = q()
         .select("id")
         .select("length", "name", "size")
         .from("user")
@@ -101,20 +101,20 @@ test("misc selects a", t => {
 
     t.is(sql, "select id, length(name) as size from user");
 
-    sql = sqldriver()
+    sql = q()
         .select("concat", ["id", "name"], "concatenatedA")
         .from("user")
         .get();
 
     t.is(sql, "select concat(id, name) as concatenatedA from user");
 
-    sql = sqldriver()
+    sql = q()
         .select("1 + 1", "sum")
         .get();
 
     t.is(sql, "select 1 + 1 as sum");
 
-    sql = sqldriver()
+    sql = q()
         .select("concat", "a, b, c", "concatenatedB")
         .get();
 
@@ -122,19 +122,19 @@ test("misc selects a", t => {
 });
 
 test("misc selects b", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .get();
     t.is(sql, "select * from user");
 
-    var sql = sqldriver()
+    var sql = q()
         .select("id, name")
         .from("user")
         .get();
     t.is(sql, "select id, name from user");
 
-    sql = sqldriver()
+    sql = q()
         .select("id as user_id")
         .select("name as user_name")
         .from("user")
@@ -142,21 +142,21 @@ test("misc selects b", t => {
 
     t.is(sql, "select id as user_id, name as user_name from user");
 
-    sql = sqldriver()
+    sql = q()
         .select(["u.id", "u.name"])
         .from("user u")
         .get();
 
     t.is(sql, "select u.id, u.name from user u");
 
-    sql = sqldriver()
+    sql = q()
         .select("u.id, u.name")
         .from("user u")
         .get();
 
     t.is(sql, "select u.id, u.name from user u");
 
-    sql = sqldriver()
+    sql = q()
         .select("id")
         .select("name", "length", "size")
         .from("user")
@@ -164,13 +164,13 @@ test("misc selects b", t => {
 
     t.is(sql, "select id, name(length) as size from user");
 
-    sql = sqldriver()
+    sql = q()
         .select("1 + 1", "sum")
         .get();
 
     t.is(sql, "select 1 + 1 as sum");
 
-    sql = sqldriver()
+    sql = q()
         .select("concat", "a, b, c", "alias")
         .get();
 
@@ -179,7 +179,7 @@ test("misc selects b", t => {
 
 test("with where in string", t => {
     var sql;
-    sql = sqldriver()
+    sql = q()
         .select("*")
         .from("user")
         .whereIn("name", ["Joe", 'Mary'])
@@ -189,7 +189,7 @@ test("with where in string", t => {
 });
 
 test("with where not in", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .whereNotIn("name", ["Joe", 'Mary'])
@@ -199,7 +199,7 @@ test("with where not in", t => {
 
 test("count", t => {
     var sql;
-    sql = sqldriver()
+    sql = q()
         .select("count", "*", "")
         .from("user")
         .get();
@@ -208,19 +208,19 @@ test("count", t => {
 });
 
 test("misc functions", function (t) {
-    var sql = sqldriver()
+    var sql = q()
         .select("count", "*", "row_count")
         .from("user")
         .get();
     t.is(sql, 'select count(*) as row_count from user');
 
-    var sql = sqldriver()
+    var sql = q()
         .select("concat", "id, name", "concat_alias")
         .from("user")
         .get();
     t.is(sql, 'select concat(id, name) as concat_alias from user');
 
-    var sql = sqldriver()
+    var sql = q()
         .select("max", "id", "")
         .from("user")
         .get();
@@ -229,13 +229,13 @@ test("misc functions", function (t) {
 
 test("where is null", function (t) {
     var sql;
-    sql = sqldriver()
+    sql = q()
         .select("job, salary")
         .from("user")
         .where("salary is null")
         .get();
     t.is(sql, 'select job, salary from user where salary is null');
-    sql = sqldriver()
+    sql = q()
         .select("job, salary")
         .from("user")
         .where("salary", "@null")
@@ -246,42 +246,42 @@ test("where is null", function (t) {
 test("misc selects c", function (t) {
     var sql;
 
-    sql = sqldriver()
+    sql = q()
         .select()
         .from("user")
         .where("id", 5)
         .get();
     t.is(sql, "select * from user where id = 5");
 
-    sql = sqldriver()
+    sql = q()
         .select()
         .from("user")
         .where("id >", 5)
         .get();
     t.is(sql, "select * from user where id > 5");
 
-    sql = sqldriver()
+    sql = q()
         .select()
         .from("user")
         .where("id !=", 5)
         .get();
     t.is(sql, "select * from user where id != 5");
 
-    sql = sqldriver()
+    sql = q()
         .select()
         .from("user")
         .where("name", "Jane")
         .get();
     t.is(sql, "select * from user where name = 'Jane'");
 
-    sql = sqldriver()
+    sql = q()
         .select("user.*")
         .from("user")
         .where("name is null")
         .get();
     t.is(sql, "select user.* from user where name is null");
 
-    sql = sqldriver()
+    sql = q()
         .select("user.*")
         .from("user")
         .where({
@@ -291,7 +291,7 @@ test("misc selects c", function (t) {
         .get();
     t.is(sql, "select user.* from user where name = 'Jane' and id > 2");
 
-    sql = sqldriver()
+    sql = q()
         .select("user.*")
         .from("user")
         .where({
@@ -302,14 +302,14 @@ test("misc selects c", function (t) {
         .get();
     t.is(sql, "select user.* from user where name = 'Ivan' and id < 8 and position_id = 3");
 
-    sql = sqldriver()
+    sql = q()
         .select("user.*")
         .from("user")
         .limit(5)
         .get();
     t.is(sql, "select user.* from user limit 5");
 
-    sql = sqldriver()
+    sql = q()
         .select("user.*")
         .from("user")
         .limit(5, 2)

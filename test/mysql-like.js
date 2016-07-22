@@ -1,10 +1,10 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m.bind(null, "mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("general like", t => {
     var sql;
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .like("name", "joe")
@@ -14,7 +14,7 @@ test("general like", t => {
 });
 
 test("right like", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .like("name", "joe", "right")
@@ -24,7 +24,7 @@ test("right like", t => {
 });
 
 test("left like", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .like("name", "joe", "left")
@@ -34,7 +34,7 @@ test("left like", t => {
 });
 
 test("right like inside expr", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .where("name %", "joe")
@@ -43,7 +43,7 @@ test("right like inside expr", t => {
 });
 
 test("begin regex", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .where("name ^%", "joe")
@@ -52,7 +52,7 @@ test("begin regex", t => {
 });
 
 test("end regex", t => {
-    var sql = sqldriver()
+    var sql = q()
         .select("*")
         .from("user")
         .where("name %$", "joe")

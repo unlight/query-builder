@@ -1,9 +1,9 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m("mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("general insert case 1", t => {
-    var sql = sqldriver
+    var sql = q()
         .set("name", "Mary")
         .from("user")
         .insert()
@@ -12,7 +12,7 @@ test("general insert case 1", t => {
 });
 
 test("general insert case 2", t => {
-    var sql = sqldriver
+    var sql = q()
         .set({ name: "Mary", "job_id": 3 })
         .from("user")
         .insert()

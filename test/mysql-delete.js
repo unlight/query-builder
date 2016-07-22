@@ -1,9 +1,9 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m("mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("delete all 1", t => {
-    var sql = sqldriver
+    var sql = q()
         .from("user")
         .delete()
         .get();
@@ -11,7 +11,7 @@ test("delete all 1", t => {
 });
 
 test("delete all 2", t => {
-    var sql = sqldriver
+    var sql = q()
         .from("user")
         .delete()
         .get();
@@ -19,7 +19,7 @@ test("delete all 2", t => {
 });
 
 test("delete where 1", t => {
-    var sql = sqldriver
+    var sql = q()
         .from("user")
         .where("id", 12)
         .delete()
@@ -28,7 +28,7 @@ test("delete where 1", t => {
 });
 
 test("delete where name string", t => {
-    var sql = sqldriver
+    var sql = q()
         .delete("user")
         .where("name", "Joe")
         .get();
