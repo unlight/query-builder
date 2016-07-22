@@ -2,7 +2,7 @@ import test from "ava";
 import m from "..";
 const sqldriver = m("mysql");
 
-test(t => {
+test("join case 1", t => {
     var sql = sqldriver
         .select("*")
         .from("user")
@@ -12,7 +12,7 @@ test(t => {
     t.is(sql, "select * from user join role on role.id = user.role_id");
 });
 
-test(t => {
+test("join case 2", t => {
     var sql = sqldriver
         .select("*")
         .from("user u")

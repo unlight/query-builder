@@ -2,7 +2,7 @@ import test from "ava";
 import m from "..";
 const sqldriver = m("mysql");
 
-test(t => {
+test("general between query", t => {
     var sql = sqldriver
         .select("*")
         .from("user")
@@ -12,7 +12,7 @@ test(t => {
     t.is(sql, "select * from user where id between 3 and 6");
 });
 
-test(t => {
+test("between double dot expr", t => {
     var sql = sqldriver
         .select("*")
         .from("user")
