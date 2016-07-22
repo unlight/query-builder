@@ -1,18 +1,35 @@
 # Query Builder
-Builds sql query for RDBMS
+Builds sql query for RDBMS.
 
 ## INSTALL
 ```
-npm i -S query-builder
+npm i -S @iamthes/query-builder
 ```
 
 ## USAGE
 ```js
-const  b = require("query-builder");
-var sql = sqldriver
+const queryBuilder = require("@iamthes/query-builder");
+const q = queryBuilder.create("mysql");
+var sql = q()
 	.select("*")
 	.from("user")
 	.where("id", 5)
 	.get(); // select * from user where id = 5
+```
+```js
+const queryBuilder = require("@iamthes/query-builder");
+const Builder = queryBuilder.mysql;
+const b = new Builder();
+var sql = b
+    .select("count", "*", "total")
+    .from("user")
+    .get(); // select count(*) as total from user
+
+// Using same instance to build next query.
+sql = b
+    .select("job, salary")
+    .from("user")
+    .where("salary", "@null")
+    .get(); // select job, salary from user where salary = null
 ```
 Check `test` directory for more examples.

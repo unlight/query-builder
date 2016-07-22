@@ -1,9 +1,9 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m("mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("join case 1", t => {
-    var sql = sqldriver
+    var sql = q()
         .select("*")
         .from("user")
         .join("role", "role.id = user.role_id")
@@ -13,7 +13,7 @@ test("join case 1", t => {
 });
 
 test("join case 2", t => {
-    var sql = sqldriver
+    var sql = q()
         .select("*")
         .from("user u")
         .leftJoin("role r", "r.id = u.role_id")

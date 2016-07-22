@@ -1,9 +1,9 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m("mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("order by 1", t => {
-    var sql = sqldriver
+    var sql = q()
         .select("*")
         .from("user")
         .orderBy("id")
@@ -12,7 +12,7 @@ test("order by 1", t => {
 });
 
 test("order by 2", t => {
-    var sql = sqldriver
+    var sql = q()
         .select("id, name")
         .from("user")
         .orderBy("id", "desc")
@@ -21,7 +21,7 @@ test("order by 2", t => {
 });
 
 test("order by 3", t => {
-    var sql = sqldriver
+    var sql = q()
         .select("id as user_id")
         .select("name as user_name")
         .from("user")
@@ -31,11 +31,29 @@ test("order by 3", t => {
 });
 
 test("several order by", t => {
-    var sql = sqldriver
+    var sql = q()
         .select()
         .from("user")
         .orderBy("name", "asc")
         .orderBy("id", "desc")
         .get();
     t.is(sql, 'select * from user order by name asc, id desc');
+});
+
+test("general group by", t => {
+    var sql = q()
+        .select("*")
+        .from("user")
+        .groupBy("name")
+        .get();
+    t.is(sql, "select * from user group by name");
+});
+
+test("having case", t => {
+    var sql = q()
+        .select("count", "name", "count_name")
+        .from("user")
+        .having("count_name >", 1)
+        .get();
+    t.is(sql, "select count(name) as count_name from user having count_name > 1");
 });

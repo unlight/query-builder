@@ -1,10 +1,10 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m("mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("general", t => {
 
-    var sql = sqldriver
+    var sql = q()
         .set("name", "Mary")
         .from("user")
         .update()
@@ -12,8 +12,7 @@ test("general", t => {
 
     t.is(sql, "update user set name = 'Mary'");
 
-
-    var sql = sqldriver
+    var sql = q()
         .set({ name: "Mary", "job_id": 3 })
         .from("user")
         .update()
@@ -22,7 +21,7 @@ test("general", t => {
     t.is(sql, "update user set name = 'Mary', job_id = 3");
 
 
-    var sql = sqldriver
+    var sql = q()
         .set("name", "Joe")
         .from("user")
         .where("id", 12)
@@ -31,7 +30,7 @@ test("general", t => {
 
     t.is(sql, "update user set name = 'Joe' where id = 12");
 
-    var sql = sqldriver
+    var sql = q()
         .update("user")
         .set("name", "Joseph")
         .where("name", "Joe")
