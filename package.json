@@ -1,10 +1,16 @@
 {
+  "name": "@iamthes/query-builder",
+  "version": "0.0.0",
+  "description": "Builds sql query for RDBMS",
   "main": "./lib",
-  "scripts": {
-    "test": "ava"
+  "directories": {
+    "test": "test"
   },
-  "keywords": [],
-  "license": "Xnet",
+  "dependencies": {
+    "is-number": "^2.1.0",
+    "lodash": "^4.13.1",
+    "toSrc": "^0.1.4"
+  },
   "devDependencies": {
     "ava": "^0.15.2",
     "sigh": "0.12.32",
@@ -12,13 +18,8 @@
     "sigh-ts": "0.0.3",
     "typescript": "^1.8.10"
   },
-  "dependencies": {
-    "is-number": "^2.1.0",
-    "lodash": "^4.13.1",
-    "toSrc": "^0.1.4"
-  },
-  "directories": {
-    "test": "test"
+  "scripts": {
+    "test": "ava"
   },
   "ava": {
     "require": [
@@ -26,8 +27,21 @@
     ],
     "babel": "inherit"
   },
-  "repository": {},
-  "name": "query-builder",
-  "description": "",
-  "version": "1.0.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unlight/query-builder.git"
+  },
+  "keywords": [
+    "query-builder",
+    "sql",
+    "sql-query",
+    "sql-query-builder",
+    "sql-builder"
+  ],
+  "author": "S",
+  "license": "Xnet",
+  "bugs": {
+    "url": "https://github.com/unlight/query-builder/issues"
+  },
+  "homepage": "https://github.com/unlight/query-builder#readme"
 }
