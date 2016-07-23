@@ -6,11 +6,8 @@ export = class MySql extends Sql {
         super();
     }
 
-    getLimit(sql: string, limit, offset) {
-        sql += "limit " + limit;
-        if (offset) {
-            sql += " offset " + offset;
-        }
+    getLimit(sql: string, limit: number, offset?: number) {
+        sql += (offset !== undefined) ? `limit ${offset}, ${limit}` : `limit ${limit}`;
         return sql;
     }
 }

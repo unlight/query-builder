@@ -218,9 +218,17 @@ export default class Sql {
         return this;
     }
 
+    top(n: number) {
+        return this.limit(n);
+    }
+
     offset(offset: number) {
         this._offset = offset;
         return this;
+    }
+
+    skip(n: number) {
+        return this.offset(n);
     }
 
     notLike(field, match, side) {
