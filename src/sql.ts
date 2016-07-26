@@ -1,4 +1,5 @@
-import { ISelectItem } from "./select-item.interface";
+import {IConditionExpression} from "./condition-expression.interface";
+import {ISelectItem} from "./select-item.interface";
 import {QueryKind} from "./query-type.enum";
 import {isArray, isString, trim, endsWith, find, includes} from "lodash";
 const isNumber = require("is-number");
@@ -75,49 +76,6 @@ export default class Sql {
         return this;
     }
 
-    private _where = function (sql: string) {
-        var concat = "";
-        if (this._wheres.length > 0) {
-            concat = this._whereConcat + " ";
-        }
-        while (this._openWhereGroupCount > 0) {
-            concat += "(";
-            this._openWhereGroupCount--;
-        }
-        // console.log("concat _w ", JSON.stringify(concat));
-        // console.log("sql _w ", JSON.stringify(sql));
-        this._whereConcat = this._whereConcatDefault;
-        this._wheres.push(concat + sql);
-        // console.log("this._wheres ", this._wheres);
-    }
-
-    private _wrap(value: any) {
-        if (!isNumber(value)) {
-            value = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                .replace(/'/g, "\\'")
-                .replace(/\\"/g, '"') + '\'';
-        }
-        return value;
-    }
-
-    private _quote(value: string, wrapInQuotes: boolean) {
-        if (isNumber(value)) {
-            return value;
-        }
-        value = value
-            .replace("\\", "\\\\")
-            .replace("\0", "\\0")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
-            .replace("'", "\\'")
-            .replace("\"", "\\\"")
-            .replace("\x1a", "\\Z");
-        if (wrapInQuotes) {
-            value = "'" + value + "'";
-        }
-        return value;
-    }
-
     between(field, value, otherValue) {
         if (otherValue === undefined) {
             var split = value.split("..");
@@ -149,41 +107,59 @@ export default class Sql {
         return this.table(table);
     }
 
-    private static _operators = [">=", "<=", "!=", "<>", ">", "<", "!@", "@", "%$", "^%", "%", "like", "not like", "is null", "is not null"];
+    private static _operators = [">=", "<=", "!=", "<>", ">", "<", "!@", "@", "%$", "^%", "%", "like", "not like", "is", "is null", "is not null"];
 
-    private _conditionExpr(field: string, value: any) {
-        var operator = find(Sql._operators, o => endsWith(field, o));
-        if (operator) {
-            field = field.slice(0, -operator.length).trim();
-        } else {
-            operator = "=";
-        }
+    private _conditionExpr(field: string, value?: any, operator?: string): IConditionExpression {
+        // console.log('_conditionExpr', arguments);
         var wrapValue = true;
-        if (value === null) value = "@null";
-        if (isString(value)) {
-            if (value.substr(0, 1) == "@") {
-                wrapValue = false;
-                value = value.substr(1);
+        if (!operator) {
+            operator = find(Sql._operators, o => endsWith(field, o));
+            if (operator) {
+                field = field.slice(0, -operator.length).trim();
             }
         }
-        var result = [field, operator];
-        if (value !== undefined) {
-            if (wrapValue) value = this._wrap(value);
-            result.push(value);
+        switch (operator) {
+            case "is null":
+                operator = "is";
+                value = "@null";
+                break;
+            case "is not null":
+                operator = "is not";
+                value = "@null";
+                break;
+            default:
+                if (!operator) {
+                    operator = "=";
+                }
         }
-        return result;
+        if (value === null) {
+            value = "@null";
+        }
+        if (isString(value) && value.substr(0, 1) === "@") {
+            wrapValue = false;
+            value = value.substr(1);
+        }
+        if (wrapValue && value !== undefined) {
+            value = this._wrap(value);
+        }
+        return { field, operator, value };
     }
 
-    where(field, value) {
+    where(field, operator?, value?) {
         if (typeof field === "object") {
             for (var i in field) {
                 this.where(i, field[i]);
             }
             return this;
         }
-        var expr = this._conditionExpr(field, value);
-        var operator = expr[1];
-        switch (operator) {
+        if (value === undefined) {
+            value = operator;
+            operator = undefined;
+        }
+        // console.log("field, value, operator ", field, value, operator);
+        var expr = this._conditionExpr(field, value, operator);
+        // console.log("expr ", expr);
+        switch (expr.operator) {
             case "@": return this.whereIn(field.slice(0, -1), value);
             case "!@": return this.whereNotIn(field.slice(0, -2), value);
             case "!%": return this.notLike(field.slice(0, -2), value, "both");
@@ -191,9 +167,7 @@ export default class Sql {
             case "^%": return this.like(field.slice(0, -2), value, "right");
             case "%$": return this.like(field.slice(0, -2), value, "left");
         }
-        var sql = expr.join(" ");
-        // console.log("sql.w ", JSON.stringify(sql));
-        this._where(sql);
+        this._where(`${expr.field} ${expr.operator} ${expr.value}`);
         return this;
     }
 
@@ -315,14 +289,13 @@ export default class Sql {
         return this;
     }
 
-    leftJoin(table, on) {
+    leftJoin(table: string, on: string) {
         return this.join(table, on, "left");
     }
 
     having(field, value) {
         var expr = this._conditionExpr(field, value);
-        var sql = expr.join(" ");
-        this._havings.push(sql);
+        this._havings.push(`${expr.field} ${expr.operator} ${expr.value}`);
         return this;
     }
 
@@ -390,6 +363,14 @@ export default class Sql {
         return result;
     }
 
+    update(table?: string) {
+        this._queryKind = QueryKind.UPDATE;
+        if (table) {
+            this._tables.push(table);
+        }
+        return this;
+    }
+
     getUpdate() {
         this._endQuery();
         var table = this._tables[0];
@@ -406,14 +387,6 @@ export default class Sql {
         }
         this.reset();
         return result;
-    }
-
-    update(table?: string) {
-        this._queryKind = QueryKind.UPDATE;
-        if (table) {
-            this._tables.push(table);
-        }
-        return this;
     }
 
     insert() {
@@ -455,14 +428,52 @@ export default class Sql {
         return result;
     }
 
-    // subQuery() {
-    // 	var sql = this.get();
-    // 	return "(" + sql + ")";
-    // }
-
-
     getLimit(sql, limit, offset): string {
         throw "getLimit() not supported.";
     }
 
+    private _where(sql: string) {
+        var concat = "";
+        if (this._wheres.length > 0) {
+            concat = this._whereConcat + " ";
+        }
+        while (this._openWhereGroupCount > 0) {
+            concat += "(";
+            this._openWhereGroupCount--;
+        }
+        // console.log("concat _w ", JSON.stringify(concat));
+        // console.log("sql _w ", JSON.stringify(sql));
+        this._whereConcat = this._whereConcatDefault;
+        this._wheres.push(concat + sql);
+        // console.log("this._wheres ", this._wheres);
+    }
+
+    private _wrap(value: any) {
+        // console.log("_wrap ", value);
+        if (!isNumber(value)) {
+            value = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                .replace(/'/g, "\\'")
+                .replace(/\\"/g, '"') + '\'';
+        }
+        return value;
+    }
+
+    private _quote(value: string, wrapInQuotes: boolean) {
+        console.log("_quote ", value);
+        if (isNumber(value)) {
+            return value;
+        }
+        value = value
+            .replace("\\", "\\\\")
+            .replace("\0", "\\0")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("'", "\\'")
+            .replace("\"", "\\\"")
+            .replace("\x1a", "\\Z");
+        if (wrapInQuotes) {
+            value = "'" + value + "'";
+        }
+        return value;
+    }
 }

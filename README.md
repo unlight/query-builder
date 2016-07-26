@@ -1,12 +1,15 @@
-# Query Builder
+Query Builder
+=============
 Builds sql query for RDBMS.
 
-## INSTALL
+INSTALL
+-------
 ```
 npm i -S @iamthes/query-builder
 ```
 
-## USAGE
+USAGE
+-----
 ```js
 const queryBuilder = require("@iamthes/query-builder");
 const q = queryBuilder.create("mysql");
@@ -33,3 +36,9 @@ sql = b
     .get(); // select job, salary from user where salary = null
 ```
 Check `test` directory for more examples.
+
+CHANGELOG
+---------
+* 0.0.3 (26 Jul 2016) where can accept 3 parameters
+* 0.0.2 (24 Jul 2016) second release
+* 0.0.1 (23 Jul 2016) first release

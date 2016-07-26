@@ -227,15 +227,17 @@ test("misc functions", function (t) {
     t.is(sql, 'select max(id) from user');
 });
 
-test("where is null", function (t) {
-    var sql;
-    sql = q()
+test("where is null 1", function (t) {
+    var sql = q()
         .select("job, salary")
         .from("user")
         .where("salary is null")
         .get();
     t.is(sql, 'select job, salary from user where salary is null');
-    sql = q()
+});
+
+test("where is null 2", function (t) {
+    var sql = q()
         .select("job, salary")
         .from("user")
         .where("salary", "@null")
@@ -270,37 +272,19 @@ test("misc selects c", function (t) {
     sql = q()
         .select()
         .from("user")
-        .where("name", "Jane")
+        .where("name", "Tim")
         .get();
-    t.is(sql, "select * from user where name = 'Jane'");
-
-    sql = q()
-        .select("user.*")
-        .from("user")
-        .where("name is null")
-        .get();
-    t.is(sql, "select user.* from user where name is null");
+    t.is(sql, "select * from user where name = 'Tim'");
 
     sql = q()
         .select("user.*")
         .from("user")
         .where({
-            name: "Jane",
+            name: "Jerry",
             "id >": 2
         })
         .get();
-    t.is(sql, "select user.* from user where name = 'Jane' and id > 2");
-
-    sql = q()
-        .select("user.*")
-        .from("user")
-        .where({
-            name: "Ivan",
-            "id <": 8
-        })
-        .where("position_id", 3)
-        .get();
-    t.is(sql, "select user.* from user where name = 'Ivan' and id < 8 and position_id = 3");
+    t.is(sql, "select user.* from user where name = 'Jerry' and id > 2");
 
     sql = q()
         .select("user.*")
@@ -317,5 +301,4 @@ test("misc selects c", function (t) {
     t.is(sql, "select user.* from user limit 2, 5");
 
 });
-
 
