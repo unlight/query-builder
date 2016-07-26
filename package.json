@@ -17,6 +17,9 @@
     "sigh-ts": "0.0.3",
     "typescript": "^1.8.10"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "ava"
   },
