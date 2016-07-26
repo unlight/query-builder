@@ -314,7 +314,7 @@ test("misc selects c", function (t) {
         .from("user")
         .limit(5, 2)
         .get();
-    t.is(sql, "select user.* from user limit 5 offset 2");
+    t.is(sql, "select user.* from user limit 2, 5");
 
 });
 

@@ -1,9 +1,9 @@
 import test from "ava";
-import m from "..";
-const sqldriver = m("mysql");
+import lib from "..";
+const q = lib.create("mysql");
 
 test("general group by", t => {
-    var sql = sqldriver
+    var sql = q()
         .select("*")
         .from("user")
         .groupBy("name")
