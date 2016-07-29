@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "is-number": "^2.1.0",
-    "lodash": "^4.13.1",
+    "lodash": "^4.14.1",
     "toSrc": "^0.1.4"
   },
   "devDependencies": {
