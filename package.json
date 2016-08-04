@@ -1,6 +1,6 @@
 {
   "name": "@iamthes/query-builder",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Builds sql query for RDBMS",
   "main": "./lib",
   "directories": {
