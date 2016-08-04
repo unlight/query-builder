@@ -3,6 +3,7 @@
   "version": "0.0.4",
   "description": "Builds sql query for RDBMS",
   "main": "./lib",
+  "typings": "./lib/index.d.ts",
   "directories": {
     "test": "test"
   },
