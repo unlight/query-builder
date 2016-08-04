@@ -1,15 +1,24 @@
 {
-	"compileOnSave": false,
-	"compilerOptions": {
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"target": "es5",
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"removeComments": false,
-		"declaration": false,
-		"allowJs": true,
-		"noEmitHelpers": false,
-		"sourceMap": true
-	}
+    "compileOnSave": false,
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "removeComments": false,
+        "noEmitHelpers": false,
+        "inlineSources": true,
+        "declaration": false,
+        "sourceMap": true
+    },
+    "files": [
+        "src/condition-expression.interface.ts",
+        "src/index.ts",
+        "src/mysql.ts",
+        "src/query-type.enum.ts",
+        "src/select-item.interface.ts",
+        "src/sql.ts",
+        "src/sqlite.ts"
+    ]
 }
