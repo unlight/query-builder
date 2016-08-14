@@ -9,16 +9,10 @@
         "removeComments": false,
         "noEmitHelpers": false,
         "inlineSources": true,
-        "declaration": false,
+        "declaration": true,
         "sourceMap": true
     },
     "files": [
-        "src/condition-expression.interface.ts",
-        "src/index.ts",
-        "src/mysql.ts",
-        "src/query-type.enum.ts",
-        "src/select-item.interface.ts",
-        "src/sql.ts",
-        "src/sqlite.ts"
+        "src/index.ts"
     ]
 }

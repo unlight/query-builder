@@ -1,6 +1,8 @@
 import Sql from "./sql";
 
-export = class MySql extends Sql {
+export = MySql;
+
+class MySql extends Sql {
 
     constructor() {
         super();

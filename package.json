@@ -8,14 +8,14 @@
     "test": "test"
   },
   "dependencies": {
-    "is-number": "^2.1.0",
-    "lodash": "^4.13.1"
+    "is-number": "2.1.0",
+    "lodash": "4.15.0"
   },
   "devDependencies": {
-    "ava": "^0.15.2",
+    "ava": "0.16.0",
     "sigh": "0.12.32",
-    "sigh-ava": "0.3.0",
-    "sigh-ts": "0.0.3",
+    "sigh-ava": "0.3.1",
+    "sigh-ts": "0.0.10",
     "typescript": "^1.8.10"
   },
   "publishConfig": {

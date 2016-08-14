@@ -8,26 +8,26 @@ export default class Sql {
 
     private _queryKind: QueryKind;
     private _selects: Array<ISelectItem>;
-    private _tables;
+    private _tables: Array<string>;
     private _wheres: Array<string>;
-    private _whereConcat;
-    private _whereConcatDefault;
-    private _sets;
+    private _whereConcat: string;
+    private _whereConcatDefault: string;
+    private _sets: Array<any>;
     private _limit: number;
     private _offset: number;
-    private _orderBys;
-    private _joins;
+    private _orderBys: Array<any>;
+    private _joins: Array<any>;
     private _groupBys: Array<string>;
-    private _whereGroupCount;
-    private _openWhereGroupCount;
-    private _havings;
+    private _whereGroupCount: number;
+    private _openWhereGroupCount: number;
+    private _havings: Array<any>;
 
     constructor() {
         this.reset();
     }
 
     private reset() {
-        this._queryKind = undefined; // todo: rename to _queryKind
+        this._queryKind = undefined;
         this._selects = [];
         this._tables = [];
         this._wheres = [];
@@ -46,9 +46,9 @@ export default class Sql {
     }
 
     select();
-    select(field: string | Array<string>);
+    select(field: string);
     select(func: string, field: any, alias: string);
-    select(field?: string | Array<string>, alias?: string, func?: string) {
+    select(field?: any, alias?: string, func?: string) {
         this._queryKind = QueryKind.SELECT;
         switch (arguments.length) {
             case 0:
@@ -88,22 +88,25 @@ export default class Sql {
         return this;
     }
 
-    table(table: string | Array<string>) {
-        var tables: Array<string>;
+    table(table: Array<string>);
+    table(table: string);
+    table(table: any) {
         if (!isArray(table)) {
-            tables = [table];
-        } else {
-            tables = table;
+            table = [table];
         }
-        tables.forEach(t => this._tables.push(t));
+        table.forEach(t => this._tables.push(t));
         return this;
     }
 
-    from(table: string | Array<string>) {
+    from(table: Array<string>);
+    from(table: string);
+    from(table: any) {
         return this.table(table);
     }
 
-    into(table: string | Array<string>) {
+    into(table: string);
+    into(table: Array<string>);
+    into(table: any) {
         return this.table(table);
     }
 
@@ -414,7 +417,6 @@ export default class Sql {
     }
 
     getInsert() {
-        // this._endQuery();
         var table = this._tables[0];
         var result = "insert into " + table;
         var names = this._sets.map(item => item.name);

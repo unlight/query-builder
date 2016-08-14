@@ -1,6 +1,8 @@
 import Sql from "./sql";
 
-export = class SQLite extends Sql {
+export = SQLite;
+
+class SQLite extends Sql {
 
     constructor() {
         super();
