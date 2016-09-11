@@ -7,7 +7,7 @@
     "test": "test"
   },
   "dependencies": {
-    "is-number": "^2.1.0",
+    "is-number": "^3.0.0",
     "lodash": "^4.14.1",
     "toSrc": "^0.1.4"
   },
