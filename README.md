@@ -1,4 +1,6 @@
 # Query Builder
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/unlight/query-builder.svg)](https://greenkeeper.io/)
 Builds sql query for RDBMS.
 
 ## INSTALL
